@@ -63,6 +63,44 @@ int scmp( char *s1, char *s2 ) {
     return(*s1 - *s2);
 }
 
+
+
+void read_file(double *W)
+{
+    FILE *fp;
+    printf("%d", vocab_size);
+    
+    //if ((fp = fopen("C:\\GitHub\\base\\numerical\\c\\ReadFile1\\Debug\\data.txt", "r")) == NULL)
+    
+    // This is the W matrix. rows*columns
+    //float W[30] = { 0.0 };
+    //float *W = malloc(sizeof(float) * 50);
+
+    int i = 0;
+
+
+    // In this file, one row should contain only one NUMBER!!
+    // So flatten your matrix.
+    if (fp = fopen("flattened.glove.840d.300.txt", "rb")) {
+
+        while (fscanf(fp, "%lf", &W[i]) != EOF && i < 600000000) {
+            ++i;
+        
+            if(i%1000000==0)
+            {
+                printf("%d, %lf\n", i, W[i-1]);
+            }
+        }        
+    }
+
+    fclose(fp);
+    //scanf("%d",&i);    
+}
+
+
+
+
+
 void initialize_parameters() {
     long long a, b;
     vector_size++; // Temporarily increment to allocate space for bias
@@ -78,11 +116,38 @@ void initialize_parameters() {
         fprintf(stderr, "Error allocating memory for gradsq\n");
         exit(1);
     }
+
+    /*
     for (b = 0; b < vector_size; b++) {
         for (a = 0; a < 2 * vocab_size; a++) {
             W[a * vector_size + b] = (rand() / (real)RAND_MAX - 0.5) / vector_size;
         }
     }
+    */
+
+    //read_file(W);
+    FILE *fp;
+    int i = 0;
+    char buf[80];
+    if (fp = fopen("flattened.glove.840d.300.txt", "rb")) {
+        double curr_val = 0;
+        //while (fscanf(fp, "%lf", &curr_val) ==1) {            
+        //while (fscanf(fp, "%lf", &curr_val) != EOF && i < 600000000) { 
+        while(fgets(buf, sizeof buf, fp)){           
+            //W[i] = curr_val;          
+            W[i] = strtod(buf, 0);          
+            if(i%1000000==0)
+            {
+                printf("%d, %lf, %lf\n", i, curr_val, W[i]);
+            }
+
+            i++;
+        }
+    }
+
+    fclose(fp);
+
+
     for (b = 0; b < vector_size; b++) {
         for (a = 0; a < 2 * vocab_size; a++) {
             gradsq[a * vector_size + b] = 1.0; // So initial value of eta is equal to initial learning rate
@@ -90,6 +155,7 @@ void initialize_parameters() {
     }
     vector_size--;
 }
+
 
 inline real check_nan(real update) {
     if (isnan(update) || isinf(update)) {
@@ -224,7 +290,7 @@ int save_params(int nb_iter) {
             fgs = fopen(output_file_gsq,"wb");
             if (fgs == NULL) {fprintf(stderr, "Unable to open file %s.\n",save_gradsq_file); return 1;}
         }
-        fout = fopen(output_file,"wb");
+        fout = fopen(output_file,"wb");//fout is the output vector file.
         if (fout == NULL) {fprintf(stderr, "Unable to open file %s.\n",save_W_file); return 1;}
         fid = fopen(vocab_file, "r");
         sprintf(format,"%%%ds",MAX_STRING_LENGTH);
@@ -365,6 +431,7 @@ int find_arg(char *str, int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
+    //std::ios_base::sync_with_stdio(false);
     int i;
     FILE *fid;
     vocab_file = malloc(sizeof(char) * MAX_STRING_LENGTH);
