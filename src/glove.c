@@ -64,43 +64,6 @@ int scmp( char *s1, char *s2 ) {
 }
 
 
-
-void read_file(double *W)
-{
-    FILE *fp;
-    printf("%d", vocab_size);
-    
-    //if ((fp = fopen("C:\\GitHub\\base\\numerical\\c\\ReadFile1\\Debug\\data.txt", "r")) == NULL)
-    
-    // This is the W matrix. rows*columns
-    //float W[30] = { 0.0 };
-    //float *W = malloc(sizeof(float) * 50);
-
-    int i = 0;
-
-
-    // In this file, one row should contain only one NUMBER!!
-    // So flatten your matrix.
-    if (fp = fopen("flattened.glove.840d.300.txt", "rb")) {
-
-        while (fscanf(fp, "%lf", &W[i]) != EOF && i < 600000000) {
-            ++i;
-        
-            if(i%1000000==0)
-            {
-                printf("%d, %lf\n", i, W[i-1]);
-            }
-        }        
-    }
-
-    fclose(fp);
-    //scanf("%d",&i);    
-}
-
-
-
-
-
 void initialize_parameters() {
     long long a, b;
     vector_size++; // Temporarily increment to allocate space for bias
@@ -125,7 +88,6 @@ void initialize_parameters() {
     }
     */
 
-    //read_file(W);
     FILE *fp;
     int i = 0;
     char buf[80];
@@ -138,9 +100,8 @@ void initialize_parameters() {
             W[i] = strtod(buf, 0);          
             if(i%1000000==0)
             {
-                printf("%d, %lf, %lf\n", i, curr_val, W[i]);
+                printf("%d, %lf\n", i,  W[i]);
             }
-
             i++;
         }
     }
